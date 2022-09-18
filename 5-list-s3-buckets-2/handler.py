@@ -4,11 +4,12 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def lambda_handler(bucket_name, region_name=None):
-
+def lambda_handler(bucket_name, region='us-east-2'):
+    # region_name='us-easts-1'
     # list s3 buckets
     try:
-        if region_name is None:
+        if region is None:
+            print('if block \n')
             s3 = boto3.resource('s3')
             bucketlist = []
             for bucket in s3.buckets.all():
@@ -16,19 +17,18 @@ def lambda_handler(bucket_name, region_name=None):
                 print('1')
       
         else:
-            s3 = boto3.resource('s3', region_name='us-east-1')
-            location = {'LocationConstraint': 'us-east-1'}
+            print ('else block \n')
+            s3 = boto3.resource('s3', region_name=region)
             bucketlist = []
             for bucket in s3.buckets.all():
                 bucketlist.append(bucket.name)
-                print('2')
+                print('3')
                 
     except ClientError as e:
         logging.error(e)
         return False
-    return {
-        "statusCode": 200,
-        "body": bucketlist
-        }
-    # print (bucketlist)
+    # return {
+    #     "statusCode": 200,
+    #     "body": bucketlist
+    #     }
     return True
